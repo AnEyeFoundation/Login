@@ -65,6 +65,7 @@
         <input type="password" id="password" placeholder="Password" required><br>
         <button onclick="attemptLogin()">Login</button>
         <p id="error" class="error"></p>
+        <button onclick="startMusic()" style="margin-top: 20px; background: #444; color: #fff;">Start Music</button>
     </div>
 
     <audio id="backgroundMusic" src="background.mp3" loop></audio>
@@ -73,6 +74,8 @@
     <audio id="soundEffect3" src="3m.mp3"></audio>
 
     <script>
+        let musicStarted = false;
+
         // Function to play random sound effects every 30-45 seconds
         function playRandomSoundEffect() {
             const sounds = [
@@ -91,14 +94,18 @@
             setTimeout(playRandomSoundEffect, randomDelay);
         }
 
-        // Start background music and random sound effects
-        window.onload = () => {
-            const backgroundMusic = document.getElementById('backgroundMusic');
-            backgroundMusic.volume = 1; // Adjust volume as needed
-            backgroundMusic.play();
+        // Function to start the music
+        function startMusic() {
+            if (!musicStarted) {
+                const backgroundMusic = document.getElementById('backgroundMusic');
+                backgroundMusic.volume = 0.5; // Adjust volume as needed
+                backgroundMusic.play();
+                musicStarted = true;
 
-            playRandomSoundEffect();
-        };
+                // Start random sound effects
+                playRandomSoundEffect();
+            }
+        }
 
         async function attemptLogin() {
             const username = document.getElementById('username').value.trim();
