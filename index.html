@@ -66,7 +66,40 @@
         <button onclick="attemptLogin()">Login</button>
         <p id="error" class="error"></p>
     </div>
+
+    <audio id="backgroundMusic" src="background.mp3" loop></audio>
+    <audio id="soundEffect1" src="1m.mp3"></audio>
+    <audio id="soundEffect2" src="2m.mp3"></audio>
+    <audio id="soundEffect3" src="3m.mp3"></audio>
+
     <script>
+        // Function to play random sound effects every 30-45 seconds
+        function playRandomSoundEffect() {
+            const sounds = [
+                document.getElementById('soundEffect1'),
+                document.getElementById('soundEffect2'),
+                document.getElementById('soundEffect3')
+            ];
+
+            const randomIndex = Math.floor(Math.random() * sounds.length);
+            const randomDelay = Math.random() * (45000 - 30000) + 30000; // Random delay between 30-45 seconds
+
+            // Play the random sound
+            sounds[randomIndex].play();
+
+            // Schedule the next sound effect
+            setTimeout(playRandomSoundEffect, randomDelay);
+        }
+
+        // Start background music and random sound effects
+        window.onload = () => {
+            const backgroundMusic = document.getElementById('backgroundMusic');
+            backgroundMusic.volume = 0.5; // Adjust volume as needed
+            backgroundMusic.play();
+
+            playRandomSoundEffect();
+        };
+
         async function attemptLogin() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
