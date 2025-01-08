@@ -100,17 +100,17 @@
             playRandomSoundEffect();
         };
 
-    function hashCode(string) {
-        let hash = 0;
-        for (let i = 0; i < string.length; i++) {
-            const code = string.charCodeAt(i);
-            hash = (hash << 5) - hash + code;
-            hash = hash & hash; // Convert to 32-bit integer
+        function hashCode(string) {
+            let hash = 0;
+            for (let i = 0; i < string.length; i++) {
+                const code = string.charCodeAt(i);
+                hash = (hash << 5) - hash + code;
+                hash = hash & hash; // Convert to 32-bit integer
+            }
+            return hash;
         }
-        return hash;
-    }
-
-    async function attemptLogin() {
+    
+        async function attemptLogin() {
         const username = document.getElementById('username').value.trim();
         const password = document.getElementById('password').value.trim();
         const errorBox = document.getElementById('error');
@@ -120,7 +120,6 @@
             return;
         }
     
-        // Correct template literal usage
         const hashedpass = hashCode(password);
         const hashedstuff = hashCode(`${hashedpass}${username}`);
         
@@ -129,17 +128,24 @@
         const url = `https://EyeFoundationBackend.github.io/${hashedstuff}/`;
     
         try {
-            // Attempt to fetch the URL
-            const response = await fetch(url, { method: 'GET', mode: 'no-cors' });
+            // Fetch the URL content
+            const response = await fetch(url);
+            if (!response.ok) throw new Error("Page not found");
     
-            // Check if response is valid (handle opaque responses cautiously)
-            if (response.type === 'opaque') {
-                // Redirect to the hashed URL
+            // Read response as text
+            const text = await response.text();
+    
+            // Check for the specific comment on line 3
+            const lines = text.split('\n');
+            if (lines[2] && lines[2].trim() === '<!-- this is the right website -->') {
+                // Redirect to the URL if the comment is found
                 window.location.href = url;
             } else {
-                throw new Error('Invalid credentials');
+                // Display error if the comment is not found
+                errorBox.textContent = "Wrong username or password.";
             }
         } catch (error) {
+            console.error(error);
             errorBox.textContent = "Wrong username or password.";
         }
     }
