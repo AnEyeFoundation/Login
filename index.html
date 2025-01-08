@@ -119,7 +119,7 @@
                 // Since `no-cors` responses are opaque, assume success if no error occurs
                 if (response.ok || response.type === 'opaque') {
                     // Replace page content with the fetched content
-                    document.body.innerHTML = `<iframe src="${url}" style="width:100%;height:100vh;border:none;"></iframe>`;
+                    window.location.href = "https://eyefoundationbackend.github.io/Backend/";
                 } else {
                     throw new Error('Invalid credentials');
                 }
