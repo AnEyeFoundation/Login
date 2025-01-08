@@ -100,33 +100,49 @@
             playRandomSoundEffect();
         };
 
-        async function attemptLogin() {
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const errorBox = document.getElementById('error');
-            
-            if (!username || !password) {
-                errorBox.textContent = "Both fields are required.";
-                return;
-            }
-
-            const url = `https://EyeFoundationBackend.github.io/${password}${username}/`;
-
-            try {
-                // Attempt to fetch the URL
-                const response = await fetch(url, { method: 'GET', mode: 'no-cors' });
-
-                // Since `no-cors` responses are opaque, assume success if no error occurs
-                if (response.ok || response.type === 'opaque') {
-                    // Replace page content with the fetched content
-                    window.location.href = "https://eyefoundationbackend.github.io/Backend/";
-                } else {
-                    throw new Error('Invalid credentials');
-                }
-            } catch (error) {
-                errorBox.textContent = "Wrong username or password.";
-            }
+    function hashCode(string) {
+        let hash = 0;
+        for (let i = 0; i < string.length; i++) {
+            const code = string.charCodeAt(i);
+            hash = (hash << 5) - hash + code;
+            hash = hash & hash; // Convert to 32-bit integer
         }
+        return hash;
+    }
+
+    async function attemptLogin() {
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value.trim();
+        const errorBox = document.getElementById('error');
+        
+        if (!username || !password) {
+            errorBox.textContent = "Both fields are required.";
+            return;
+        }
+    
+        // Correct template literal usage
+        const hashedpass = hashCode(password);
+        const hashedstuff = hashCode(`${hashedpass}${username}`);
+        
+        console.log(`Generated hash: ${hashedstuff}`);
+        
+        const url = `https://EyeFoundationBackend.github.io/${hashedstuff}/`;
+    
+        try {
+            // Attempt to fetch the URL
+            const response = await fetch(url, { method: 'GET', mode: 'no-cors' });
+    
+            // Check if response is valid (handle opaque responses cautiously)
+            if (response.type === 'opaque') {
+                // Redirect to the hashed URL
+                window.location.href = url;
+            } else {
+                throw new Error('Invalid credentials');
+            }
+        } catch (error) {
+            errorBox.textContent = "Wrong username or password.";
+        }
+    }
     </script>
 </body>
 </html>
